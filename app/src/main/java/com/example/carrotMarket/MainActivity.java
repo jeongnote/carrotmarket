@@ -1,4 +1,4 @@
-package org.techtown.carrotmarket;
+package com.example.carrotMarket;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,10 +7,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.carrotMarket.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,6 +1,5 @@
-package org.techtown.carrotmarket;
+package com.example.carrotMarket;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,6 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+
+import com.example.carrotMarket.R;
 
 import java.util.concurrent.TimeUnit;
 
