@@ -11,8 +11,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.carrotMarket.R;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
             }
         });

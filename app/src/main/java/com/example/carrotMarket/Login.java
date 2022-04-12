@@ -1,16 +1,23 @@
 package com.example.carrotMarket;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -30,13 +37,16 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
-import com.example.carrotMarket.R;
-
 import java.util.concurrent.TimeUnit;
 
-public class LoginActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     private EditText editText;
+
+    //동적 생성 미리 선언
+    EditText tempEtt;
+    TextView tempTvw;
+    Button tempBtn;
 
     private static final String TAG = "LoginActivity";
 
@@ -51,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_phone);
+        setContentView(R.layout.login);
 
         // editText 주소
         phoneNumberEditText = findViewById(R.id.editText);
@@ -71,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.rgb(255,255,255));
-        getSupportActionBar().setTitle(R.string.test); //툴바 제목
+        getSupportActionBar().setTitle(""); //툴바 제목
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //뒤로가기 버튼
 
         // 11자 이상 입력 후 버튼 클릭시 전화 번호 인증 메소드 실행
@@ -81,17 +91,64 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int num = editText.getText().toString().length();
-                // 10자리 이상 숫자일 시 인증문자 발송
+                // 인증문자 발송(10자리 이상)
                 if(num >= 10) {
+
+                    LinearLayout ll = findViewById(R.id.ll);
+                    TextView textView4 = findViewById(R.id.textView4);
+                    TextView textView5 = findViewById(R.id.textView5);
+
                     String phoneNumber = editText.getText().toString();
-                    startPhoneNumberVerification(phoneNumber);
-                } else {
-                    // 10자리 미만일 시 미발송
-                    if(num < 10) {
+                    //startPhoneNumberVerification(phoneNumber);
+                    //startActivity(intent);
 
-                    }
+                    // 기존 View 애니메이션 이동
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(editText,"translationY", -350f);
+                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(authButton,"translationY", -350f);
+                    ObjectAnimator animation3 = ObjectAnimator.ofFloat(textView4,"translationY", -350f);
+                    ObjectAnimator animation4 = ObjectAnimator.ofFloat(textView5,"translationY", -350f);
+                    animation.setDuration(200);
+                    animation2.setDuration(200);
+                    animation3.setDuration(200);
+                    animation4.setDuration(200);
+                    animation.start();
+                    animation2.start();
+                    animation3.start();
+                    animation4.start();
+
+                    // 동적 인증번호 입력 editText 생성
+                    tempEtt = new EditText(getApplicationContext());
+                    tempEtt.setHint("인증번호 입력");
+                    tempEtt.setBackgroundResource(R.drawable.login_edittext_round);
+                    tempEtt.setTextSize(16);
+                    tempEtt.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 130));
+                    tempEtt.setY(-300);
+                    tempEtt.requestFocus();
+                    tempEtt.setPadding(30,0,0,0);
+                    tempEtt.setFilters(new InputFilter[] {new InputFilter.LengthFilter(11)});
+
+                    // 동적 주의 textView 생성
+                    tempTvw = new TextView(getApplicationContext());
+                    tempTvw.setText("어떤 경우에도 타인에게 공유하지 마세요!");
+                    tempTvw.setTextSize(14);
+                    tempTvw.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 130));
+                    tempTvw.setY(-270);
+                    tempTvw.onEditorAction(3);
+
+                    // 동적 인증번호 확인 button 생성
+                    tempBtn = new Button(getApplicationContext());
+                    tempBtn.setText("인증번호 확인");
+                    tempBtn.setBackgroundResource(R.drawable.login_button_round_gray);
+                    tempBtn.setTextSize(18);
+                    tempBtn.setTypeface(Typeface.DEFAULT_BOLD);
+                    tempBtn.setTextColor(Color.parseColor("#FFFFFF"));
+                    tempBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 130));
+                    tempBtn.setY(-300);
+
+                    ll.addView(tempEtt);
+                    ll.addView(tempTvw);
+                    ll.addView(tempBtn);
                 }
-
             }
         });
 
@@ -104,10 +161,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 String text = charSequence.toString();
                 if(text.length() >= 10) {
-                    authButton.setBackgroundColor(Color.parseColor("#4d5158"));
+                    authButton.setBackgroundResource(R.drawable.login_button_round_black);
                 } else {
                     if(text.length() < 10) {
-                        authButton.setBackgroundColor(Color.parseColor("#dcdee2"));
+                        authButton.setBackgroundResource(R.drawable.login_button_round_gray);
                     }
                 }
             }
