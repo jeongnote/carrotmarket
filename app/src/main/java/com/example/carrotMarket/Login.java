@@ -110,6 +110,22 @@ public class Login extends AppCompatActivity {
                     authOkButton.setVisibility(View.VISIBLE);
 
                     authButton.setText("인증문자 다시 받기");
+
+                    editText2.requestFocus();
+                }
+            }
+        });
+
+        // authOkButton 클릭 시, 화면 이동
+        authOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 임시
+                int num = editText2.getText().toString().length();
+                if(num == 6) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    Intent intent = new Intent(getApplicationContext(),Home.class);
+                    startActivity(intent);
                 }
             }
         });
