@@ -36,7 +36,7 @@ public class Home extends AppCompatActivity {
         setSupportActionBar(toolbar2);
         getSupportActionBar().setTitle("");
 
-        // fragment 클릭 이벤트
+        // bottomNavigationView 클릭 이벤트 -> fragment 전환
         homeFragment = new HomeFragment();
         chatFragment = new ChatFragment();
         profileFragment = new ProfileFragment();
