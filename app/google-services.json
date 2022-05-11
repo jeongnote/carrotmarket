@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "433381431313",
-    "project_id": "carrotMarket-da4a1",
-    "storage_bucket": "carrotMarket-da4a1.appspot.com"
+    "project_number": "223652935160",
+    "project_id": "carrotmarket-cd11c",
+    "storage_bucket": "carrotmarket-cd11c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:433381431313:android:f349a6085ddf7511f239b0",
+        "mobilesdk_app_id": "1:223652935160:android:6fcd809c0710802d12120d",
         "android_client_info": {
           "package_name": "com.example.carrotMarket"
         }
       },
       "oauth_client": [
         {
-          "client_id": "433381431313-5i42rg8q5emontfnn7unmkmabh3chfc6.apps.googleusercontent.com",
+          "client_id": "223652935160-77muhvecov2q39bn1bpinl8pqpegce90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carrotMarket",
+            "certificate_hash": "2b5ac254c2a145e551400f2a4c1129d6da021e44"
+          }
+        },
+        {
+          "client_id": "223652935160-sniaj6goob0b2r89p7om3p3a6fgpukeb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCqhBCOqLSUQd7cQIWka_9ssZ0VNgFvpr8"
+          "current_key": "AIzaSyCMujGytJFL3nMFE2QX66QeiLNSk079Vrc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "433381431313-5i42rg8q5emontfnn7unmkmabh3chfc6.apps.googleusercontent.com",
+              "client_id": "223652935160-sniaj6goob0b2r89p7om3p3a6fgpukeb.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

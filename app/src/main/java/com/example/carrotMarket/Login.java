@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -25,14 +26,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -50,6 +59,15 @@ public class Login extends AppCompatActivity {
     TextView textView5;
     EditText editText2;
     Button authOkButton;
+    SignInButton signInButton;
+    Button button8;
+
+    private static final String TAG = "GoogleActivity";
+    private static final int RC_SIGN_IN = 9001;
+
+    private FirebaseAuth mAuth;
+
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +78,12 @@ public class Login extends AppCompatActivity {
         textView5 = findViewById(R.id.textView5);
         editText2 = findViewById(R.id.editText2);
         authOkButton = findViewById(R.id.button4);
+        signInButton = findViewById(R.id.button7);
+        // facebook 버튼
+        button8 = findViewById(R.id.button8);
+
+        // 파이어베이스 초기화
+        mAuth = FirebaseAuth.getInstance();
 
         // 포커스
         phoneNumberEditText = findViewById(R.id.editText);
@@ -92,8 +116,8 @@ public class Login extends AppCompatActivity {
                     ObjectAnimator animation2 = ObjectAnimator.ofFloat(authButton,"translationY", -350f);
                     ObjectAnimator animation3 = ObjectAnimator.ofFloat(textView4,"translationY", -350f);
                     ObjectAnimator animation4 = ObjectAnimator.ofFloat(textView5,"translationY", -350f);
-                    ObjectAnimator animation5 = ObjectAnimator.ofFloat(editText2,"translationY", -350f);
-                    ObjectAnimator animation6 = ObjectAnimator.ofFloat(authOkButton,"translationY", -350f);
+                    ObjectAnimator animation5 = ObjectAnimator.ofFloat(editText2,"translationY", -500f);
+                    ObjectAnimator animation6 = ObjectAnimator.ofFloat(authOkButton,"translationY", -500f);
                     animation.setDuration(200);
                     animation2.setDuration(200);
                     animation3.setDuration(200);
@@ -171,6 +195,63 @@ public class Login extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) { }
         });
+
+        // 구글 버튼 클릭 시, 발생하는 이벤트
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            }
+        });
+
+        // 구글 로그인 설정
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            Toast.makeText(getApplicationContext(),"성공했습니다.",Toast.LENGTH_LONG).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(),"실패했습니다.",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     // 뒤로가기 눌렀을때 이벤트
