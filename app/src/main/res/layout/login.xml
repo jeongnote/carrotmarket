@@ -63,28 +63,19 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="14dp"/>
 
-        <LinearLayout
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebook_login_button"
+            android:layout_width="378dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_login_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_login_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/facebook_login_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp" />
-        </LinearLayout>
+            android:layout_height="38dp"
+            android:layout_marginTop="14dp"/>
 
         <EditText
             android:id="@+id/editText2"

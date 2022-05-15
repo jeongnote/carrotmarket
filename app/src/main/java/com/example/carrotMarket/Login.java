@@ -67,6 +67,7 @@ public class Login extends AppCompatActivity {
     EditText editText2;
     Button authOkButton;
     SignInButton signInButton;
+    LoginButton loginButton;
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -87,6 +88,7 @@ public class Login extends AppCompatActivity {
         editText2 = findViewById(R.id.editText2);
         authOkButton = findViewById(R.id.button4);
         signInButton = findViewById(R.id.google_login_button);
+        loginButton = findViewById(R.id.facebook_login_button);
 
         // 파이어베이스 초기화
         mAuth = FirebaseAuth.getInstance();
@@ -118,26 +120,35 @@ public class Login extends AppCompatActivity {
                 if(num >= 10) {
 
                     // 기존 View 및 INVISIBLE View 애니메이션 이동
-                    ObjectAnimator animation = ObjectAnimator.ofFloat(phoneNumberEditText,"translationY", -350f);
-                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(authButton,"translationY", -350f);
-                    ObjectAnimator animation3 = ObjectAnimator.ofFloat(textView4,"translationY", -350f);
-                    ObjectAnimator animation4 = ObjectAnimator.ofFloat(textView5,"translationY", -350f);
-                    ObjectAnimator animation5 = ObjectAnimator.ofFloat(editText2,"translationY", -500f);
-                    ObjectAnimator animation6 = ObjectAnimator.ofFloat(authOkButton,"translationY", -500f);
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(textView4,"translationY", -350f);
+                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(textView5,"translationY", -350f);
+                    ObjectAnimator animation3 = ObjectAnimator.ofFloat(phoneNumberEditText,"translationY", -350f);
+                    ObjectAnimator animation4 = ObjectAnimator.ofFloat(authButton,"translationY", -350f);
+                    ObjectAnimator animation5 = ObjectAnimator.ofFloat(editText2,"translationY", -350f);
+                    ObjectAnimator animation6 = ObjectAnimator.ofFloat(authOkButton,"translationY", -350f);
+                    ObjectAnimator animation7 = ObjectAnimator.ofFloat(loginButton,"translationY", 200f);
+                    ObjectAnimator animation8 = ObjectAnimator.ofFloat(signInButton,"translationY", 200f);
                     animation.setDuration(200);
                     animation2.setDuration(200);
                     animation3.setDuration(200);
                     animation4.setDuration(200);
                     animation5.setDuration(200);
                     animation6.setDuration(200);
+                    animation7.setDuration(200);
+                    animation8.setDuration(200);
                     animation.start();
                     animation2.start();
                     animation3.start();
                     animation4.start();
                     animation5.start();
                     animation6.start();
+                    animation7.start();
+                    animation8.start();
+
                     editText2.setVisibility(View.VISIBLE);
                     authOkButton.setVisibility(View.VISIBLE);
+                    loginButton.setVisibility(View.GONE);
+                    signInButton.setVisibility(View.GONE);
 
                     authButton.setText("인증문자 다시 받기");
 
@@ -222,7 +233,6 @@ public class Login extends AppCompatActivity {
 
         // Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = findViewById(R.id.facebook_login_button);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
