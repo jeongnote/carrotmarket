@@ -13,9 +13,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!-- facebook -->
-    <string name="facebook_app_id">1031027107537899</string>
-    <string name="fb_login_protocol_scheme">fb1031027107537899</string>
-    <string name="facebook_client_token">EAAOptrRZCoZBsBAMNxeAQxQCZCemw07dIBGBfLp30uZAYHcjuGvUqXyPrEiK9DQzU6pZASSZBMbWzaJpxFJINKZChW7MKAFjjy3qUqt7eQ1jsfcrcjy9X4LBGYNJAyTSnNLRRbNF1FSH0gaX3N13LdY4mQmu9ZAsOevGF1QiIGwY7ik3Ed9pjVPAfYOHqx8BoRocKIUQsL9nQgZDZD</string>
+    <string name="facebook_app_id">앱ID 넣으면 됩니다.</string>
+    <string name="fb_login_protocol_scheme">"fb" + 앱ID 넣으면 됩니다.</string>
+    <string name="facebook_client_token">클라이언트 토큰을 넣으면 됩니다.</string>
 
 
 </resources>
