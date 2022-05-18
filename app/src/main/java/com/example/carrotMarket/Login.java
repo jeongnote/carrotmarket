@@ -1,22 +1,16 @@
 package com.example.carrotMarket;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,42 +34,34 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
 
-import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
 
-    int num;
-    EditText phoneNumberEditText;
+    String editText_Email_Str;
+    String editText_Password_num;
+    TextView textView_Hello;
+    TextView textView_Guide;
+    EditText editText_Email;
+    EditText editText_Password;
+    Button button_Confirm;
+    SignInButton button_Google;
+    LoginButton button_Firebase;
     InputMethodManager imm;
     Toolbar toolbar;
-    Button authButton;
-    TextView textView4;
-    TextView textView5;
-    EditText editText2;
-    Button authOkButton;
-    SignInButton signInButton;
-    LoginButton loginButton;
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-
     private FirebaseAuth mAuth;
-
     private GoogleSignInClient mGoogleSignInClient;
-
     private CallbackManager mCallbackManager;
 
     @Override
@@ -83,19 +69,19 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        textView4 = findViewById(R.id.textView4);
-        textView5 = findViewById(R.id.textView5);
-        editText2 = findViewById(R.id.editText2);
-        authOkButton = findViewById(R.id.button4);
-        signInButton = findViewById(R.id.google_login_button);
-        loginButton = findViewById(R.id.facebook_login_button);
+        textView_Hello = findViewById(R.id.textView_Hello);
+        textView_Guide = findViewById(R.id.textView_Guide);
+        editText_Email = findViewById(R.id.editText_Email);
+        editText_Password = findViewById(R.id.editText_Password);
+        button_Confirm = findViewById(R.id.button_confirm);
+        button_Google = findViewById(R.id.google_login_button);
+        button_Firebase = findViewById(R.id.facebook_login_button);
 
         // 파이어베이스 초기화
         mAuth = FirebaseAuth.getInstance();
 
-        // 포커스
-        phoneNumberEditText = findViewById(R.id.editText);
-        phoneNumberEditText.requestFocus();
+        // 이메일 입력칸 포커스
+        editText_Email.requestFocus();
 
         // 키보드 표시
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -107,83 +93,37 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // 인증번호 버튼 눌렀을때 이벤트 실행
-        authButton = findViewById(R.id.button3);
-        authButton.setOnClickListener(new View.OnClickListener() {
+        // 인증버튼 눌렀을 때 이벤트 실행
+        button_Confirm.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                num = phoneNumberEditText.getText().toString().length();
+                editText_Email_Str = editText_Email.getText().toString();
+                editText_Password_num = editText_Password.getText().toString();
 
-                // 10자리 이상 시
-                if(num >= 10) {
-
-                    // 기존 View 및 INVISIBLE View 애니메이션 이동
-                    ObjectAnimator animation = ObjectAnimator.ofFloat(textView4,"translationY", -350f);
-                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(textView5,"translationY", -350f);
-                    ObjectAnimator animation3 = ObjectAnimator.ofFloat(phoneNumberEditText,"translationY", -350f);
-                    ObjectAnimator animation4 = ObjectAnimator.ofFloat(authButton,"translationY", -350f);
-                    ObjectAnimator animation5 = ObjectAnimator.ofFloat(editText2,"translationY", -350f);
-                    ObjectAnimator animation6 = ObjectAnimator.ofFloat(authOkButton,"translationY", -350f);
-                    ObjectAnimator animation7 = ObjectAnimator.ofFloat(loginButton,"translationY", 200f);
-                    ObjectAnimator animation8 = ObjectAnimator.ofFloat(signInButton,"translationY", 200f);
-                    animation.setDuration(200);
-                    animation2.setDuration(200);
-                    animation3.setDuration(200);
-                    animation4.setDuration(200);
-                    animation5.setDuration(200);
-                    animation6.setDuration(200);
-                    animation7.setDuration(200);
-                    animation8.setDuration(200);
-                    animation.start();
-                    animation2.start();
-                    animation3.start();
-                    animation4.start();
-                    animation5.start();
-                    animation6.start();
-                    animation7.start();
-                    animation8.start();
-
-                    editText2.setVisibility(View.VISIBLE);
-                    authOkButton.setVisibility(View.VISIBLE);
-                    loginButton.setVisibility(View.GONE);
-                    signInButton.setVisibility(View.GONE);
-
-                    authButton.setText("인증문자 다시 받기");
-
-                    editText2.requestFocus();
+                // 유효성 검사 후 true 일 시, 이메일 생성 메소드로 넘김
+                if(isValidEmail(editText_Email_Str) == true && isValidPassword(editText_Password_num) == true) {
+                    createUser(editText_Email_Str, editText_Password_num);
+                } else {
+                    Toast.makeText(getApplicationContext(), "입력 양식을 맞춰주세요.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // authOkButton 클릭 시, 화면 이동
-        authOkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // 임시
-                int num = editText2.getText().toString().length();
-                if(num == 6) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    Intent intent = new Intent(getApplicationContext(),Home.class);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        // authButton 색상 변화
-        phoneNumberEditText.addTextChangedListener(new TextWatcher() {
+        // 인증버튼 색상 변화
+        editText_Password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 String text = charSequence.toString();
-                if(text.length() >= 10) {
-                    authButton.setBackgroundResource(R.drawable.login_button_round_black);
+                if(text.length() >= 8) {
+                    button_Confirm.setBackgroundResource(R.drawable.login_button_round_black);
                 } else {
-                    if(text.length() < 10) {
-                        authButton.setBackgroundResource(R.drawable.login_button_round_gray);
+                    if(text.length() < 8) {
+                        button_Confirm.setBackgroundResource(R.drawable.login_button_round_gray);
                     }
                 }
             }
@@ -192,29 +132,8 @@ public class Login extends AppCompatActivity {
             public void afterTextChanged(Editable editable) { }
         });
 
-        // authOkButton 색상 변화
-        editText2.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String text = charSequence.toString();
-                if(text.length() == 6) {
-                    authOkButton.setBackgroundResource(R.drawable.login_button_round_orange);
-                } else {
-                    if(text.length() < 6) {
-                        authOkButton.setBackgroundResource(R.drawable.login_button_round_gray);
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) { }
-        });
-
-        // 구글 버튼 클릭 시, 발생하는 이벤트
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        // 구글버튼 클릭 이벤트
+        button_Google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -223,7 +142,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        // 구글 로그인 설정
+        // Google 로그인 설정
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -231,10 +150,10 @@ public class Login extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Facebook Login button
+        // Facebook 로그인 설정
         mCallbackManager = CallbackManager.Factory.create();
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        button_Firebase.setReadPermissions("email", "public_profile");
+        button_Firebase.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -250,6 +169,88 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    // 뒤로가기 버튼 클릭 이벤트
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home: {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);;
+                imm.hideSoftInputFromWindow(editText_Email.getWindowToken(), 0);
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // 이메일 유효성 검사
+    public static boolean isValidEmail(String email) {
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if(m.matches()) {
+            err = true;
+        }
+        return err;
+    }
+
+    // 비밀번호 유효성 검사
+    public static boolean isValidPassword(String password){
+        boolean err = false;
+        String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(password);
+        if(m.matches()){
+            err = true;
+        }
+        return err;
+    }
+
+    // 이메일 로그인
+    private void createUser(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(getApplicationContext(), "연동 성공!",
+                                    Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "연동 실패!",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+                    }
+                });
+    }
+
+    // Google
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager = CallbackManager.Factory.create();
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+            }
+        }
+    }
+
+    // Facebook
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -276,25 +277,7 @@ public class Login extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager = CallbackManager.Factory.create();
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-            }
-        }
-    }
-
+    // Firebase
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -313,19 +296,5 @@ public class Login extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    // 뒤로가기 눌렀을때 이벤트
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home: {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);;
-                imm.hideSoftInputFromWindow(phoneNumberEditText.getWindowToken(), 0);
-                finish();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

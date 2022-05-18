@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView_Hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -33,7 +33,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textView_Guide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -41,7 +41,7 @@
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/editText_Email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10sp"
@@ -55,7 +55,7 @@
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/editText_Password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10sp"
@@ -69,11 +69,11 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/button_confirm"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/login_button_round_gray"
-            android:text="인증문자 받기"
+            android:text="가입하기"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -105,31 +105,5 @@
                     tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
         </LinearLayout>
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16sp"
-            android:background="@drawable/login_edittext_round"
-            android:ems="10"
-            android:hint="인증번호 입력"
-            android:inputType="number"
-            android:maxLength="6"
-            android:minHeight="48dp"
-            android:padding="14dp"
-            android:textSize="16sp"
-            android:visibility="invisible" />
-
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/login_button_round_gray"
-            android:text="인증번호 확인"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="invisible" />
     </LinearLayout>
 </LinearLayout>
