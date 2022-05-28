@@ -44,19 +44,19 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    String editText_Email_Str;
-    String editText_Password_num;
-    TextView textView_Hello;
-    TextView textView_Guide;
-    EditText editText_Email;
-    EditText editText_Password;
-    Button button_Confirm;
-    SignInButton button_Google;
-    LoginButton button_Firebase;
-    InputMethodManager imm;
-    Toolbar toolbar;
+    String editText_Email_Str_L;
+    String editText_Password_num_L;
+    TextView textView_Hello_L;
+    TextView textView_Guide_L;
+    EditText editText_Email_L;
+    EditText editText_Password_L;
+    Button button_Confirm_L;
+    SignInButton button_Google_L;
+    LoginButton button_Firebase_L;
+    InputMethodManager imm_L;
+    Toolbar toolbar_L;
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -67,44 +67,44 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
 
-        textView_Hello = findViewById(R.id.textView_Hello);
-        textView_Guide = findViewById(R.id.textView_Guide);
-        editText_Email = findViewById(R.id.editText_Email);
-        editText_Password = findViewById(R.id.editText_Password);
-        button_Confirm = findViewById(R.id.button_confirm);
-        button_Google = findViewById(R.id.google_login_button);
-        button_Firebase = findViewById(R.id.facebook_login_button);
+        textView_Hello_L = findViewById(R.id.textView_Hello_L);
+        textView_Guide_L = findViewById(R.id.textView_Guide_L);
+        editText_Email_L = findViewById(R.id.editText_Email_L);
+        editText_Password_L = findViewById(R.id.editText_Password_L);
+        button_Confirm_L = findViewById(R.id.button_confirm_L);
+        button_Google_L = findViewById(R.id.google_login_button_L);
+        button_Firebase_L = findViewById(R.id.facebook_login_button_L);
 
         // 파이어베이스 초기화
         mAuth = FirebaseAuth.getInstance();
 
         // 이메일 입력칸 포커스
-        editText_Email.requestFocus();
+        editText_Email_L.requestFocus();
 
         // 키보드 표시
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        imm_L = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm_L.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         // 툴바 + 뒤로가기 버튼 생성
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolbar_L = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar_L);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // 인증버튼 눌렀을 때 이벤트 실행
-        button_Confirm.setOnClickListener(new View.OnClickListener() {
+        button_Confirm_L.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                editText_Email_Str = editText_Email.getText().toString();
-                editText_Password_num = editText_Password.getText().toString();
+                editText_Email_Str_L = editText_Email_L.getText().toString();
+                editText_Password_num_L = editText_Password_L.getText().toString();
 
                 // 유효성 검사 후 true 일 시, 이메일 생성 메소드로 넘김
-                if(isValidEmail(editText_Email_Str) == true && isValidPassword(editText_Password_num) == true) {
-                    createUser(editText_Email_Str, editText_Password_num);
+                if(isValidEmail(editText_Email_Str_L) == true && isValidPassword(editText_Password_num_L) == true) {
+                    loginUser(editText_Email_Str_L, editText_Password_num_L);
                 } else {
                     Toast.makeText(getApplicationContext(), "입력 양식을 맞춰주세요.", Toast.LENGTH_SHORT).show();
                 }
@@ -112,7 +112,7 @@ public class Login extends AppCompatActivity {
         });
 
         // 인증버튼 색상 변화
-        editText_Password.addTextChangedListener(new TextWatcher() {
+        editText_Password_L.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -120,10 +120,10 @@ public class Login extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 String text = charSequence.toString();
                 if(text.length() >= 8) {
-                    button_Confirm.setBackgroundResource(R.drawable.login_button_round_black);
+                    button_Confirm_L.setBackgroundResource(R.drawable.login_button_round_black);
                 } else {
                     if(text.length() < 8) {
-                        button_Confirm.setBackgroundResource(R.drawable.login_button_round_gray);
+                        button_Confirm_L.setBackgroundResource(R.drawable.login_button_round_gray);
                     }
                 }
             }
@@ -133,12 +133,15 @@ public class Login extends AppCompatActivity {
         });
 
         // 구글버튼 클릭 이벤트
-        button_Google.setOnClickListener(new View.OnClickListener() {
+        button_Google_L.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                imm_L.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+
+                FirebaseUser user = mAuth.getCurrentUser();
+                updateUI(user);
             }
         });
 
@@ -152,8 +155,8 @@ public class Login extends AppCompatActivity {
 
         // Facebook 로그인 설정
         mCallbackManager = CallbackManager.Factory.create();
-        button_Firebase.setReadPermissions("email", "public_profile");
-        button_Firebase.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        button_Firebase_L.setReadPermissions("email", "public_profile");
+        button_Firebase_L.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -175,7 +178,7 @@ public class Login extends AppCompatActivity {
         switch(item.getItemId()) {
             case android.R.id.home: {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);;
-                imm.hideSoftInputFromWindow(editText_Email.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(editText_Email_L.getWindowToken(), 0);
                 finish();
                 return true;
             }
@@ -208,29 +211,26 @@ public class Login extends AppCompatActivity {
     }
 
     // 이메일 로그인
-    private void createUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
+    private void loginUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(getApplicationContext(), "연동 성공!",
-                                    Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "연동 실패!",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            updateUI(null);
                         }
                     }
                 });
     }
 
-    // Google
+    // Google -> Firebase
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -250,7 +250,30 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    // Facebook
+    // Google 로그인
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            Toast.makeText(getApplicationContext(),"성공했습니다.",Toast.LENGTH_LONG).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(),"실패했습니다.",Toast.LENGTH_LONG).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+    }
+
+    // Facebook 로그인
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -265,36 +288,24 @@ public class Login extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(getApplicationContext(), "연동 성공!",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(user);
+                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "연동 실패!",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            updateUI(null);
                         }
                     }
                 });
     }
 
-    // Firebase
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(getApplicationContext(),"성공했습니다.",Toast.LENGTH_LONG).show();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(),"실패했습니다.",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+    // 로그인 후 홈으로 이동
+    private void updateUI(FirebaseUser user) {
+        if(user != null) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

@@ -29,12 +29,23 @@ public class MainActivity extends AppCompatActivity {
         button4.setText(spannableString);
 
         // 클릭 이벤트 -> 로그인 페이지로 넘어감.
-        Button button = findViewById(R.id.button2);
+        Button button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
+                Intent intent = new Intent(getApplicationContext(), JoinActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // 클릭 이벤트 -> 로그인 페이지로 넘어감.
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
             }
         });
